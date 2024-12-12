@@ -8,7 +8,7 @@
 const STATE = {
     NONE: -1,
     ROTATE: 0,
-    DOLLY: 0,
+    DOLLY: 9007199254740991,
     PAN: 2,
     TOUCH_ROTATE: 3,
     TOUCH_PAN: 4,

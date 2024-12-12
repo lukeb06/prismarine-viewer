@@ -38,7 +38,6 @@ class Viewer {
     }
 
     setVersion(version) {
-        version = '1.20.1';
         version = getVersion(version)
         if (version === null) {
             const msg = `${version} is not supported`
