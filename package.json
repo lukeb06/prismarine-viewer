@@ -1,6 +1,6 @@
 {
-  "name": "prismarine-viewer",
-  "version": "1.28.0",
+  "name": "prismarine-neoviewer",
+  "version": "1.28.3",
   "description": "Web based viewer",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,7 @@
     ]
   },
   "dependencies": {
-    "@tweenjs/tween.js": "^23.1.1",
+    "@tweenjs/tween.js": "^19.0.0",
     "compression": "^1.7.4",
     "express": "^4.17.1",
     "minecraft-data": "^3.0.0",
