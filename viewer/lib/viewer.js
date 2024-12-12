@@ -20,7 +20,7 @@ class Viewer {
         this.scene.add(this.directionalLight)
 
         const size = renderer.getSize(new THREE.Vector2())
-        this.camera = new THREE.PerspectiveCamera(75, size.x / size.y, 0.1, 1000)
+        this.camera = new THREE.PerspectiveCamera(90, size.x / size.y, 0.1, 1000)
 
         this.world = new WorldRenderer(this.scene)
         this.entities = new Entities(this.scene)

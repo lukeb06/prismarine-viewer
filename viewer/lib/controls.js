@@ -8,7 +8,7 @@
 const STATE = {
     NONE: -1,
     ROTATE: 0,
-    DOLLY: 9007199254740991,
+    DOLLY: 0,
     PAN: 2,
     TOUCH_ROTATE: 3,
     TOUCH_PAN: 4,
@@ -64,7 +64,7 @@ class MapControls {
 
         // This option actually enables dollying in and out; left as "zoom" for backwards compatibility.
         // Set to false to disable zooming
-        this.enableZoom = false
+        this.enableZoom = true
         this.enableTouchZoom = true
         this.zoomSpeed = 1.0
 
@@ -76,11 +76,11 @@ class MapControls {
         // Set to false to disable panning
         this.enablePan = true
         this.enableTouchPan = true
-        this.panSpeed = 1.0
+        this.panSpeed = 0.5
         this.screenSpacePanning = false // if false, pan orthogonal to world-space direction camera.up
         this.keyPanDistance = 32 // how far to pan
-        this.keyPanSpeed = 5	// pixels moved per arrow key push
-        this.verticalTranslationSpeed = 0.5 // how much Y increments moving up/down
+        this.keyPanSpeed = 2	// pixels moved per arrow key push
+        this.verticalTranslationSpeed = 0.1 // how much Y increments moving up/down
 
         this.keyDowns = []
 
@@ -97,7 +97,7 @@ class MapControls {
         this.spherical = new THREE.Spherical()
         this.sphericalDelta = new THREE.Spherical()
 
-        this.scale = 1
+        this.scale = 0;
         this.panOffset = new THREE.Vector3()
         this.zoomChanged = false
 
@@ -135,6 +135,10 @@ class MapControls {
         this.onKeyUp = this.onKeyUp.bind(this)
 
         this.registerHandlers()
+    }
+
+    dispose() {
+
     }
 
     //#region Public Methods
