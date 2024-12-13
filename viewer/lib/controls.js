@@ -97,7 +97,7 @@ class MapControls {
         this.spherical = new THREE.Spherical()
         this.sphericalDelta = new THREE.Spherical()
 
-        this.scale = 0;
+        this.scale = 1;
         this.panOffset = new THREE.Vector3()
         this.zoomChanged = false
 
@@ -366,10 +366,12 @@ class MapControls {
     dollyOut(dollyScale) {
         if (this.object.isPerspectiveCamera) {
             this.scale /= dollyScale
+            console.log('OUT PERSPECTIVE', this.scale, dollyScale)
         } else if (this.object.isOrthographicCamera) {
             this.object.zoom = Math.max(this.minZoom, Math.min(this.maxZoom, this.object.zoom * dollyScale))
             this.object.updateProjectionMatrix()
             this.zoomChanged = true
+            console.log('OUT ORTHOGRAPHIC', this.object.zoom, dollyScale)
         } else {
             console.warn('WARNING: OrbitControls.js encountered an unknown camera type - dolly/zoom disabled.')
             this.enableZoom = false
