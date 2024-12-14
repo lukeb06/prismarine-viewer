@@ -20,14 +20,14 @@ class Viewer {
         this.scene.add(this.directionalLight)
 
         const size = renderer.getSize(new THREE.Vector2())
-        this.camera = new THREE.PerspectiveCamera(90, size.x / size.y, 0.1, 1000)
+        this.camera = new THREE.PerspectiveCamera(100, size.x / size.y, 0.1, 1000)
 
         this.world = new WorldRenderer(this.scene)
         this.entities = new Entities(this.scene)
         this.primitives = new Primitives(this.scene, this.camera)
 
         this.domElement = renderer.domElement
-        this.playerHeight = 1.6
+        this.playerHeight = 1.62
         this.isSneaking = false
     }
 
@@ -92,6 +92,7 @@ class Viewer {
         })
 
         emitter.on('loadChunk', ({ x, z, chunk }) => {
+            console.log('loadChunk', chunk)
             this.addColumn(x, z, chunk)
         })
 
