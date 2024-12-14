@@ -285,7 +285,7 @@ class Entity {
             const mesh = getMesh(texture.replace('textures', 'textures/' + version) + '.png', jsonModel)
 
             if (entity.name === 'player') {
-                const mesh = getPlayerMesh('/getSkin?name=' + entity.username, entities[entity.name].geometry)
+                const mesh = getPlayerMesh(`${window.location.protocol}//${window.location.hostname}/getSkin?name=` + entity.username, entities[entity.name].geometry)
                 this.mesh.add(mesh)
                 return
             }
