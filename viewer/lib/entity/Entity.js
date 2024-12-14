@@ -200,10 +200,82 @@ function getMesh(texture, jsonModel) {
     return mesh
 }
 
+function getPlayerMesh(texture, jsonModel) {
+    const bones = {}
+
+    const geoData = {
+        positions: [],
+        normals: [],
+        uvs: [],
+        indices: [],
+        skinIndices: [],
+        skinWeights: []
+    }
+    let i = 0
+    jsonModel.default.bones.forEach(jsonBone => {
+        const bone = new THREE.Bone()
+        if (jsonBone.pivot) {
+            bone.position.x = jsonBone.pivot[0]
+            bone.position.y = jsonBone.pivot[1]
+            bone.position.z = jsonBone.pivot[2]
+        }
+        if (jsonBone.bind_pose_rotation) {
+            bone.rotation.x = -jsonBone.bind_pose_rotation[0] * Math.PI / 180
+            bone.rotation.y = -jsonBone.bind_pose_rotation[1] * Math.PI / 180
+            bone.rotation.z = -jsonBone.bind_pose_rotation[2] * Math.PI / 180
+        } else if (jsonBone.rotation) {
+            bone.rotation.x = -jsonBone.rotation[0] * Math.PI / 180
+            bone.rotation.y = -jsonBone.rotation[1] * Math.PI / 180
+            bone.rotation.z = -jsonBone.rotation[2] * Math.PI / 180
+        }
+        bones[jsonBone.name] = bone
+
+        if (jsonBone.cubes) {
+            jsonBone.cubes.forEach(cube => {
+                addCube(geoData, i, bone, cube, jsonModel.texturewidth, jsonModel.textureheight)
+            })
+        }
+        i++
+    })
+
+    const rootBones = []
+    jsonModel.default.bones.forEach(jsonBone => {
+        if (jsonBone.parent) bones[jsonBone.parent].add(bones[jsonBone.name])
+        else rootBones.push(bones[jsonBone.name])
+    })
+
+    const skeleton = new THREE.Skeleton(Object.values(bones))
+
+    const geometry = new THREE.BufferGeometry()
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(geoData.positions, 3))
+    geometry.setAttribute('normal', new THREE.Float32BufferAttribute(geoData.normals, 3))
+    geometry.setAttribute('uv', new THREE.Float32BufferAttribute(geoData.uvs, 2))
+    geometry.setAttribute('skinIndex', new THREE.Uint16BufferAttribute(geoData.skinIndices, 4))
+    geometry.setAttribute('skinWeight', new THREE.Float32BufferAttribute(geoData.skinWeights, 4))
+    geometry.setIndex(geoData.indices)
+
+    const material = new THREE.MeshLambertMaterial({ transparent: true, skinning: true, alphaTest: 0.1 })
+    const mesh = new THREE.SkinnedMesh(geometry, material)
+    mesh.add(...rootBones)
+    mesh.bind(skeleton)
+    mesh.scale.set(1 / 16, 1 / 16, 1 / 16)
+
+    loadTexture(texture, texture => {
+        texture.magFilter = THREE.NearestFilter
+        texture.minFilter = THREE.NearestFilter
+        texture.flipY = false
+        texture.wrapS = THREE.RepeatWrapping
+        texture.wrapT = THREE.RepeatWrapping
+        material.map = texture
+    })
+
+    return mesh
+}
+
 class Entity {
-    constructor(version, type, scene) {
-        const e = entities[type]
-        if (!e) return console.warn(`Unknown entity ${type}`)
+    constructor(version, entity, scene) {
+        const e = entities[entity.name]
+        if (!e) return console.warn(`Unknown entity ${entity.name}`)
 
         this.mesh = new THREE.Object3D()
         for (const [name, jsonModel] of Object.entries(e.geometry)) {
@@ -211,6 +283,13 @@ class Entity {
             if (!texture) continue
             // console.log(JSON.stringify(jsonModel, null, 2))
             const mesh = getMesh(texture.replace('textures', 'textures/' + version) + '.png', jsonModel)
+
+            if (entity.name === 'player') {
+                const mesh = getPlayerMesh('/getSkin?name=' + entity.username, entities[entity.name].geometry)
+                this.mesh.add(mesh)
+                return
+            }
+
             /* const skeletonHelper = new THREE.SkeletonHelper( mesh )
             skeletonHelper.material.linewidth = 2
             scene.add( skeletonHelper ) */
