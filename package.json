@@ -1,6 +1,6 @@
 {
   "name": "prismarine-neoviewer",
-  "version": "1.29.3",
+  "version": "1.29.5",
   "description": "Web based viewer",
   "main": "index.js",
   "scripts": {
